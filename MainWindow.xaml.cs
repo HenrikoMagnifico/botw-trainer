@@ -45,7 +45,7 @@
 
       // Technically your first item as they are stored in reverse so we work backwards
       // start 43DAB0D8?
-      private const uint ItemEnd = 0x43DC4B18; //0x43AF4B14;
+      private const uint ItemEnd = 0x43DC5158; //0x43DC4B18; //0x43AF4B14;
 
       private int itemTotal = 0;
 
@@ -180,7 +180,7 @@
       {
          try
          {
-            itemTotal = gecko.GetInt(0x43D8D098);
+            itemTotal = gecko.GetInt(0x43D8D6D8); //0x43D8D098
             // 0x43ABD094 - 1.3.1
             // 0x43ABD094 - 1.3.0
             // 0x43C83090
@@ -457,59 +457,6 @@
          catch (Exception ex)
          {
             LogError(ex, "Attempting to update changed fields");
-         }
-         #endregion
-
-         #region Codes
-         try
-         {
-            // For the 'Codes' tab we mimic JGecko and send cheats to codehandler
-            if (Equals(tab, Codes))
-            {
-               // Disable codehandler before we modify
-               gecko.WriteUInt(CodeHandlerEnabled, 0x00000000);
-
-               // clear current codes
-               var array = new byte[4864];
-               Array.Clear(array, 0, array.Length);
-               gecko.WriteBytes(CodeHandlerStart, array);
-
-               // Write our selected codes to mem stream
-               var ms = new MemoryStream();
-               foreach (var code in codes)
-               {
-                  var b = BitConverter.GetBytes(code);
-                  ms.Write(b.Reverse().ToArray(), 0, 4);
-               }
-
-               var bytes = ms.ToArray();
-               gecko.WriteBytes(CodeHandlerStart, bytes);
-
-               // Re-enable codehandler
-               gecko.WriteUInt(CodeHandlerEnabled, 0x00000001);
-
-               // Save controller choice
-               /*
-               if (Controller.SelectedValue.ToString() != Settings.Default.Controller)
-               {
-                  Settings.Default.Controller = Controller.SelectedValue.ToString();
-                  Settings.Default.Save();
-               }
-               */
-            }
-
-            DebugGrid.ItemsSource = items;
-            DebugGrid.UpdateLayout();
-            Debug.UpdateLayout();
-
-            // clear changed after save
-            tbChanged.Clear();
-            cbChanged.Clear();
-            ddChanged.Clear();
-         }
-         catch (Exception ex)
-         {
-            LogError(ex);
          }
          #endregion
 
@@ -1393,9 +1340,9 @@
                   code = code.Replace(Environment.NewLine, ",");
                   code = code.Replace(" ", ",");
                   code = code.Replace("\n", ",");
-                  string[] array = code.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                  string[] codeArray = code.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 
-                  foreach (var item in array)
+                  foreach (var item in codeArray)
                   {
                      var temp = uint.Parse(item.Trim(), NumberStyles.HexNumber);
                      codes.Add(temp);
@@ -1403,6 +1350,28 @@
                }
             }
          }
+
+         // Disable codehandler before we modify
+         gecko.WriteUInt(CodeHandlerEnabled, 0x00000000);
+
+         // clear current codes
+         var array = new byte[4864];
+         Array.Clear(array, 0, array.Length);
+         gecko.WriteBytes(CodeHandlerStart, array);
+
+         // Write our selected codes to mem stream
+         var ms = new MemoryStream();
+         foreach (var code in codes)
+         {
+            var b = BitConverter.GetBytes(code);
+            ms.Write(b.Reverse().ToArray(), 0, 4);
+         }
+
+         var bytes = ms.ToArray();
+         gecko.WriteBytes(CodeHandlerStart, bytes);
+
+         // Re-enable codehandler
+         gecko.WriteUInt(CodeHandlerEnabled, 0x00000001);
       }
    }
 }
