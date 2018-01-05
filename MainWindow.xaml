@@ -53,11 +53,16 @@
          <TabItem Header="Key Items" x:Name="KeyItems" Margin="0,0,0,0" Background="PaleVioletRed" IsEnabled="False"/>
 
          <TabItem Header="Debug" x:Name="Debug" Margin="0,0,0,0" IsEnabled="False">
-            <WrapPanel Margin="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 
-               <Button x:Name="Export" Content="Export" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="75" Click="ExportClick" />
+            <Grid>
+               <Grid.RowDefinitions>
+                  <RowDefinition Height="30"/>
+                  <RowDefinition Height="*"/>
+               </Grid.RowDefinitions>
 
-               <DataGrid x:Name="DebugGrid" AutoGenerateColumns="False" Margin="10,10,0,0" ClipboardCopyMode="IncludeHeader" Height="450" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+               <Button x:Name="Export" Content="Export to CSV" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="75" Click="ExportClick" Grid.Row="0" />
+
+               <DataGrid x:Name="DebugGrid" AutoGenerateColumns="False" Margin="10,10,0,0" ClipboardCopyMode="IncludeHeader" Height="430" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1">
                   <DataGrid.Columns>
                      <DataGridTextColumn Header="Id" Width="150" Binding="{Binding Id}"/>
                      <DataGridTextColumn Header="Name" Width="160" Binding="{Binding Name}"/>
@@ -74,28 +79,58 @@
                      <DataGridTextColumn Header="Modifier5" Width="65" Binding="{Binding Modifier5Value, Mode=OneWay}"/>
                   </DataGrid.Columns>
                </DataGrid>
+            </Grid>
 
-            </WrapPanel>
+
          </TabItem>
 
          <TabItem Header="Codes" x:Name="Codes" Margin="0,0,0,0" Background="Yellow">
-            <WrapPanel>
-               <RichTextBox IsReadOnly="True" Margin="10" BorderThickness="0">
-                  <FlowDocument>
-                     <Paragraph FontSize="13">
-                        This uses the same xml file as JGecko U. Please copy your xml (renamed to 'codes.xml') into the same folder as the trainer. Click Save to load the xml and apply them. Only 'Enabled' codes will apply.
-                     </Paragraph>
-                  </FlowDocument>
-               </RichTextBox>
+
+            <Grid>
+               <Grid.RowDefinitions>
+                  <RowDefinition Height="*"/>
+               </Grid.RowDefinitions>
+
+               <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*"></ColumnDefinition>
+                  <ColumnDefinition Width="*"></ColumnDefinition>
+               </Grid.ColumnDefinitions>
+
+               <ScrollViewer x:Name="CodeScroll" VerticalAlignment="Top" Margin="0,10,0,0" Grid.Column="0">
+                  <WrapPanel x:Name="CodesWrap" VerticalAlignment="Top" Margin="0">
+                     <DataGrid x:Name="CodesGrid" AutoGenerateColumns="False" Margin="10" GotFocus="CodesGrid_GotFocus">
+                        <DataGrid.Columns>
+                           <DataGridTextColumn Header="Name" Width="350" Binding="{Binding Name}" IsReadOnly="True"/>
+                           <DataGridCheckBoxColumn Header="Enabled" Width="70" Binding="{Binding Enabled}" />
+                        </DataGrid.Columns>
+                     </DataGrid>
+                  </WrapPanel>
+               </ScrollViewer>
+
+               <WrapPanel VerticalAlignment="Top" Margin="10" Grid.Column="1">
+                  <RichTextBox IsReadOnly="True" IsDocumentEnabled="False" Margin="10" BorderThickness="0">
+                     <FlowDocument>
+                        <Paragraph FontSize="14">
+                           Codes found in your XML file are listed here.
+                        </Paragraph>
+
+                        <Paragraph FontSize="14">
+                           To enable or disable them click the checkbox next to each code name.
+                        </Paragraph>
+
+                        <Paragraph FontSize="14">
+                           Click 'Send Codes' to send them to the Wii U. Sending codes also updates the xml file.
+                        </Paragraph>
+                     </FlowDocument>
+                  </RichTextBox>
+
+                  <Button x:Name="SendCodes" Margin="20,0,0,0" Click="SendCodes_Click" Width="100">Send Codes</Button>
+
+                  <Button x:Name="ReloadXml" Margin="20,0,0,0" Click="ReloadXml_Click" Width="100">Reload XML</Button>
+               </WrapPanel>
+
                
-               <RichTextBox x:Name="CurrentCodes" IsReadOnly="True" Margin="10" BorderThickness="0">
-                  <FlowDocument>
-                     <Paragraph FontSize="13">
-                        
-                     </Paragraph>
-                  </FlowDocument>
-               </RichTextBox>
-            </WrapPanel>
+            </Grid>
          </TabItem>
 
          <TabItem Header="Time" x:Name="Time" Margin="0,0,0,0" Background="Yellow">
@@ -110,7 +145,7 @@
             </Canvas>
          </TabItem>
 
-         <TabItem Header="Coordinates" Margin="0" Background="Yellow">
+         <TabItem Header="Coordinates" x:Name="Coordinates" Margin="0" Background="Yellow">
             <StackPanel>
 
                <Grid Margin="10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">

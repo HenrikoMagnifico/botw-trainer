@@ -49,37 +49,13 @@ namespace BotwTrainer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("4.2.1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("4.2.2")]
         public string CurrentVersion {
             get {
                 return ((string)(this["CurrentVersion"]));
             }
             set {
                 this["CurrentVersion"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int Warning {
-            get {
-                return ((int)(this["Warning"]));
-            }
-            set {
-                this["Warning"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Pro")]
-        public string Controller {
-            get {
-                return ((string)(this["Controller"]));
-            }
-            set {
-                this["Controller"] = value;
             }
         }
     }

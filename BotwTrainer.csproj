@@ -88,6 +88,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="ByteSwap.cs" />
+    <Compile Include="Code.cs" />
     <Compile Include="Gecko.cs" />
     <Compile Include="GetDotNetVersion.cs" />
     <Compile Include="IpAddress.cs" />

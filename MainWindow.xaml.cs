@@ -44,14 +44,15 @@
       private readonly List<CheckBox> cbChanged = new List<CheckBox>();
 
       // Technically your first item as they are stored in reverse so we work backwards
-      // start 43DAB0D8?
       private const uint ItemEnd = 0x43DC5158; //0x43DC4B18; //0x43AF4B14;
 
       private int itemTotal = 0;
 
       private List<Item> items;
 
-      private List<uint> codes;
+      private List<Code> codes;
+
+      private XDocument codesXml;
 
       private JToken json;
 
@@ -170,6 +171,8 @@
          {
             LogError(ex, "Error loading json.");
          }
+
+         LoadCodes();
 
          IpAddress.Text = Settings.Default.IpAddress;
 
@@ -481,7 +484,7 @@
 
             if (result)
             {
-               GetNonItemData();
+               ClearChanged();
 
                LoadTab(Weapons, 0);
                LoadTab(Bows, 1);
@@ -516,12 +519,6 @@
       private void SaveClick(object sender, RoutedEventArgs e)
       {
          Save.IsEnabled = false;
-
-         if (Codes.IsSelected)
-         {
-            LoadApplyCodes();
-            return;
-         }
 
          var result = SaveItemData((TabItem)TabControl.SelectedItem);
 
@@ -642,23 +639,18 @@
             // init gecko
             gecko = new Gecko(tcpConn, this);
 
-            if (connected)
+            var status = gecko.GetServerStatus();
+            if (status == 0)
             {
-               var status = gecko.GetServerStatus();
-               if (status == 0)
-               {
-                  return;
-               }
-
-               Settings.Default.IpAddress = IpAddress.Text;
-               Settings.Default.Save();
-
-               //Controller.SelectedValue = Settings.Default.Controller;
-
-               GetNonItemData();
-
-               ToggleControls("Connected");
+               return;
             }
+
+            Settings.Default.IpAddress = IpAddress.Text;
+            Settings.Default.Save();
+
+            ClearChanged();
+
+            ToggleControls("Connected");
          }
          catch (System.Net.Sockets.SocketException)
          {
@@ -715,11 +707,6 @@
          var os = gecko.GetOsVersion();
 
          MessageBox.Show(string.Format("Server: {0}\nOs: {1}", server, os));
-      }
-
-      private void RefreshCodeClick(object sender, RoutedEventArgs e)
-      {
-         GetNonItemData();
       }
 
       private void LoadTab(ContentControl tab, int page)
@@ -862,12 +849,8 @@
          tab.Content = scroll;
       }
 
-      private void GetNonItemData()
+      private void ClearChanged()
       {
-         var time = GetCurrentTime();
-         CurrentTime.Text = time.ToString(CultureInfo.InvariantCulture);
-         TimeSlider.Value = time;
-
          tbChanged.Clear();
          cbChanged.Clear();
          ddChanged.Clear();
@@ -985,22 +968,23 @@
             return;
          }
 
-         if (Debug.IsSelected || Help.IsSelected || Credits.IsSelected)
+         if (Time.IsSelected)
+         {
+            var time = GetCurrentTime();
+            CurrentTime.Text = time.ToString(CultureInfo.InvariantCulture);
+            TimeSlider.Value = time;
+         }
+
+         if (Debug.IsSelected || Help.IsSelected || Credits.IsSelected || Coordinates.IsSelected || Codes.IsSelected || Time.IsSelected || ItemTree.IsSelected)
          {
             Save.IsEnabled = false;
+            Refresh.IsEnabled = Debug.IsSelected;
             return;
          }
 
-         Save.IsEnabled = HasChanged;
+         Refresh.IsEnabled = true;
 
-         if (!Codes.IsSelected)
-         {
-            EnableCoords.IsChecked = false;
-         }
-         else
-         {
-            Save.IsEnabled = true;
-         }
+         Save.IsEnabled = HasChanged;
       }
 
       private void ShrineListChanged(object sender, SelectionChangedEventArgs e)
@@ -1070,13 +1054,6 @@
          }
 
          tbChanged.Add(thisTb);
-
-         Save.IsEnabled = HasChanged;
-      }
-
-      private void CheckBoxChanged(object sender, RoutedEventArgs e)
-      {
-         cbChanged.Add(sender as CheckBox);
 
          Save.IsEnabled = HasChanged;
       }
@@ -1296,10 +1273,8 @@
          return 1;
       }
 
-      private void LoadApplyCodes()
+      private void LoadCodes()
       {
-         CurrentCodes.Document.Blocks.Clear();
-
          if (!File.Exists("codes.xml"))
          {
             LogError(new Exception("Can't find codes.xml"));
@@ -1308,48 +1283,59 @@
 
          using (StreamReader sr = new StreamReader("codes.xml", true))
          {
-            XDocument xdoc = XDocument.Load(sr);
+            codesXml = XDocument.Load(sr);
+            codes = new List<Code>();
 
-            codes = new List<uint>();
-
-            foreach (var entry in xdoc.Descendants("entry"))
+            foreach (var entry in codesXml.Descendants("entry"))
             {
+               // xml data
                var name = entry.Attribute("name").Value;
                var code = entry.Element("code").Value.Trim();
                var enabled = Convert.ToBoolean(entry.Element("enabled").Value);
+               
+               codes.Add(new Code { Name = name, CodeBlock = code, Enabled = enabled });               
+            }
 
-               // list in codes tab              
+            CodesGrid.ItemsSource = codes;
+            CodesGrid.UpdateLayout();
+         }         
+      }
 
-               var paragraph = new Paragraph
+      private void ApplyCodes()
+      {
+         var hexlist = new List<uint>();
+
+         var count = 0;
+
+         foreach (Code code in CodesGrid.ItemsSource)
+         {
+            var thisEntry = codesXml.Descendants("entry").Where(x => x.Attribute("name").Value == code.Name).FirstOrDefault();
+            if(thisEntry != null)
+            {
+               //thisEntry.Attribute("name").Value = code.Name;
+               thisEntry.Element("enabled").Value = code.Enabled.ToString().ToLower();
+            }
+
+            if (code.Enabled)
+            {
+               var block = code.CodeBlock;
+
+               block = block.Replace(Environment.NewLine, ",");
+               block = block.Replace(" ", ",");
+               block = block.Replace("\n", ",");
+               string[] codeArray = block.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+
+               foreach (var item in codeArray)
                {
-                  FontSize = 14,
-                  Margin = new Thickness(0),
-                  Padding = new Thickness(0),
-                  LineHeight = 14
-               };
-
-               paragraph.Inlines.Add(string.Format("{0} (Enabled: {1})", name, enabled));
-               paragraph.Inlines.Add(new LineBreak());
-               paragraph.Inlines.Add(code);
-               paragraph.Inlines.Add(new LineBreak());
-
-               CurrentCodes.Document.Blocks.Add(paragraph);
-
-               if (enabled)
-               {
-                  code = code.Replace(Environment.NewLine, ",");
-                  code = code.Replace(" ", ",");
-                  code = code.Replace("\n", ",");
-                  string[] codeArray = code.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-
-                  foreach (var item in codeArray)
-                  {
-                     var temp = uint.Parse(item.Trim(), NumberStyles.HexNumber);
-                     codes.Add(temp);
-                  }
+                  var hex = uint.Parse(item.Trim(), NumberStyles.HexNumber);
+                  hexlist.Add(hex);
                }
+
+               count++;
             }
          }
+
+         codesXml.Save("codes.xml");
 
          // Disable codehandler before we modify
          gecko.WriteUInt(CodeHandlerEnabled, 0x00000000);
@@ -1361,9 +1347,9 @@
 
          // Write our selected codes to mem stream
          var ms = new MemoryStream();
-         foreach (var code in codes)
+         foreach (var hex in hexlist)
          {
-            var b = BitConverter.GetBytes(code);
+            var b = BitConverter.GetBytes(hex);
             ms.Write(b.Reverse().ToArray(), 0, 4);
          }
 
@@ -1372,6 +1358,32 @@
 
          // Re-enable codehandler
          gecko.WriteUInt(CodeHandlerEnabled, 0x00000001);
+
+         MessageBox.Show(string.Format("{0} Codes Sent", count));
+      }
+
+      private void ReloadXml_Click(object sender, RoutedEventArgs e)
+      {
+         LoadCodes();
+         MessageBox.Show("XML Loaded");
+         SendCodes.IsEnabled = true;
+      }
+
+      private void SendCodes_Click(object sender, RoutedEventArgs e)
+      {
+         ApplyCodes();
+      }
+
+      private void CodesGrid_GotFocus(object sender, RoutedEventArgs e)
+      {
+         if (e.OriginalSource is DataGridCell cell && cell.Column is DataGridCheckBoxColumn)
+         {
+            CodesGrid.BeginEdit();
+            if (cell.Content is CheckBox chkBox)
+            {
+               chkBox.IsChecked = !chkBox.IsChecked;
+            }
+         }
       }
    }
 }
