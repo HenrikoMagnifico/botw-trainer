@@ -23,9 +23,6 @@
 
    using Newtonsoft.Json.Linq;
 
-   /// <summary>
-   /// Interaction logic for MainWindow
-   /// </summary>
    public partial class MainWindow
    {
       // The original list of values that take effect when you save / load
@@ -81,38 +78,100 @@
       {
          Title = string.Format("{0} v{1}", Title, Settings.Default.CurrentVersion);
 
-         var netVersion = new GetDotNetVersion().Get45PlusFromRegistry();
-         if (netVersion.Version == null)
+         if (!CheckNetVersion())
          {
-            MessageBoxResult choice = MessageBox.Show("Required .NET Version 4.6.2 not found. Please update.", "New Version", MessageBoxButton.OKCancel);
-
-            if (choice == MessageBoxResult.OK)
-            {
-               Process.Start("https://www.microsoft.com/en-us/download/details.aspx?id=53345");
-            }
-            else
-            {
-               return;
-            }
-         }
-         else
-         {
-            Title += string.Format(" | .NET Version: {0}", netVersion.Version);
+            return;
          }
 
-         items = new List<Item>();
+         CheckLatestVersion();
 
+         LoadJsonData();
+
+         LoadCodes();
+
+         items = new List<Item>();         
+
+         IpAddress.Text = Settings.Default.IpAddress;
+
+         Save.IsEnabled = HasChanged;
+      }
+
+      private void LoadJsonData()
+      {
          var client = new WebClient
          {
-            BaseAddress = Settings.Default.VersionUrl,
+            BaseAddress = Settings.Default.GitUrl,
             Encoding = Encoding.UTF8,
-            CachePolicy =
-                 new System.Net.Cache.RequestCachePolicy(
-                 System.Net.Cache.RequestCacheLevel.BypassCache)
+            CachePolicy = new System.Net.Cache.RequestCachePolicy(System.Net.Cache.RequestCacheLevel.BypassCache)
          };
 
          client.Headers.Add("Cache-Control", "no-cache");
-         client.DownloadStringCompleted += ClientDownloadStringCompleted;
+         client.DownloadStringCompleted += JsonLoadComplete;
+
+         // try to get current version
+         try
+         {
+            client.DownloadStringAsync(new Uri(string.Format("{0}{1}", client.BaseAddress, "items.json")));
+         }
+         catch (Exception ex)
+         {
+            LogError(ex, "Error loading current version.");
+         }
+      }
+
+      private void JsonLoadComplete(object sender, DownloadStringCompletedEventArgs e)
+      {         
+         // try to load json data
+         try
+         {
+            var data = e.Result;
+            json = JObject.Parse(data);
+
+            // Shrine data
+            var shrines = json.SelectToken("Shrines").Value<JObject>().Properties().ToList().OrderBy(x => x.Name);
+            foreach (var shrine in shrines)
+            {
+               ShrineList.Items.Add(new ComboBoxItem { Content = shrine.Value["Name"], Tag = shrine.Name });
+            }
+
+            // Tower data
+            var towers = json.SelectToken("Towers").Value<JObject>().Properties().ToList().OrderBy(x => x.Name);
+            foreach (var tower in towers)
+            {
+               TowerList.Items.Add(new ComboBoxItem { Content = tower.Value["Name"], Tag = tower.Name });
+            }
+
+            // Ranches
+            var ranches = json.SelectToken("Ranches").Value<JObject>().Properties().ToList().OrderBy(x => x.Name);
+            foreach (var ranch in ranches)
+            {
+               RanchList.Items.Add(new ComboBoxItem { Content = ranch.Value["Name"], Tag = ranch.Name });
+            }
+
+            // Misc
+            var misc = json.SelectToken("Misc").Value<JObject>().Properties().ToList().OrderBy(x => x.Name);
+            foreach (var m in misc)
+            {
+               MiscList.Items.Add(new ComboBoxItem { Content = m.Value["Name"], Tag = m.Name });
+            }
+         }
+         catch (Exception ex)
+         {
+            LogError(ex, "Error loading json.");
+         }
+      }
+
+      private void CheckLatestVersion()
+      {
+         var client = new WebClient
+         {
+            BaseAddress = Settings.Default.GitUrl,
+            Encoding = Encoding.UTF8,
+            CachePolicy = new System.Net.Cache.RequestCachePolicy(System.Net.Cache.RequestCacheLevel.BypassCache)
+         };
+
+         client.Headers.Add("Cache-Control", "no-cache");
+         client.DownloadStringCompleted += VersionCheckComplete;
 
          // try to get current version
          try
@@ -123,60 +182,48 @@
          {
             LogError(ex, "Error loading current version.");
          }
+      }
 
-         // try to load json data
+      private void VersionCheckComplete(object sender, DownloadStringCompletedEventArgs e)
+      {
          try
          {
-            var file = Assembly.GetExecutingAssembly().GetManifestResourceStream("BotwTrainer.items.json");
-            if (file != null)
+            var result = e.Result;
+            if (result != Settings.Default.CurrentVersion)
             {
-               using (var reader = new StreamReader(file))
+               MessageBoxResult choice = MessageBox.Show(string.Format("An update is available: {0}. Download?", result), "New Version", MessageBoxButton.OKCancel);
+
+               if (choice == MessageBoxResult.OK)
                {
-                  var data = reader.ReadToEnd();
-                  json = JObject.Parse(data);
-
-                  JsonViewer.Load(data);
-
-                  // Shrine data
-                  var shrines = json.SelectToken("Shrines").Value<JObject>().Properties().ToList().OrderBy(x => x.Name);
-                  foreach (var shrine in shrines)
-                  {
-                     ShrineList.Items.Add(new ComboBoxItem { Content = shrine.Value["Name"], Tag = shrine.Name });
-                  }
-
-                  // Tower data
-                  var towers = json.SelectToken("Towers").Value<JObject>().Properties().ToList().OrderBy(x => x.Name);
-                  foreach (var tower in towers)
-                  {
-                     TowerList.Items.Add(new ComboBoxItem { Content = tower.Value["Name"], Tag = tower.Name });
-                  }
-
-                  // Ranches
-                  var ranches = json.SelectToken("Ranches").Value<JObject>().Properties().ToList().OrderBy(x => x.Name);
-                  foreach (var ranch in ranches)
-                  {
-                     RanchList.Items.Add(new ComboBoxItem { Content = ranch.Value["Name"], Tag = ranch.Name });
-                  }
-
-                  // Misc
-                  var misc = json.SelectToken("Misc").Value<JObject>().Properties().ToList().OrderBy(x => x.Name);
-                  foreach (var m in misc)
-                  {
-                     MiscList.Items.Add(new ComboBoxItem { Content = m.Value["Name"], Tag = m.Name });
-                  }
+                  Process.Start("https://github.com/joffnerd/botw-trainer/releases");
                }
             }
          }
-         catch (Exception ex)
+         catch (Exception)
          {
-            LogError(ex, "Error loading json.");
+            MessageBox.Show("Error checking for new version.");
          }
+      }
 
-         LoadCodes();
+      private bool CheckNetVersion()
+      {
+         var netVersion = new GetDotNetVersion().Get45PlusFromRegistry();
+         if (netVersion.Version == null)
+         {
+            MessageBoxResult choice = MessageBox.Show("Required .NET Version 4.6.2 not found. Please update.", "New Version", MessageBoxButton.OKCancel);
 
-         IpAddress.Text = Settings.Default.IpAddress;
+            if (choice == MessageBoxResult.OK)
+            {
+               Process.Start("https://www.microsoft.com/en-us/download/details.aspx?id=53345");
+            }
 
-         Save.IsEnabled = HasChanged;
+            return false;
+         }
+         else
+         {
+            Title += string.Format(" | .NET Version: {0}", netVersion.Version);
+            return true;
+         }         
       }
 
       private bool LoadItemData()
@@ -933,28 +980,7 @@
       {
          var regex = new Regex("[^0-9]+");
          e.Handled = regex.IsMatch(e.Text);
-      }
-
-      private void ClientDownloadStringCompleted(object sender, DownloadStringCompletedEventArgs e)
-      {
-         try
-         {
-            var result = e.Result;
-            if (result != Settings.Default.CurrentVersion)
-            {
-               MessageBoxResult choice = MessageBox.Show(string.Format("An update is available: {0}. Download?", result), "New Version", MessageBoxButton.OKCancel);
-
-               if (choice == MessageBoxResult.OK)
-               {
-                  Process.Start("https://github.com/joffnerd/botw-trainer/releases");
-               }
-            }
-         }
-         catch (Exception)
-         {
-            MessageBox.Show("Error checking for new version.");
-         }
-      }
+      }      
 
       private void UpdateProgress(int percent)
       {
@@ -968,14 +994,14 @@
             return;
          }
 
-         if (Time.IsSelected)
+         if (Other.IsSelected)
          {
             var time = GetCurrentTime();
             CurrentTime.Text = time.ToString(CultureInfo.InvariantCulture);
             TimeSlider.Value = time;
          }
 
-         if (Debug.IsSelected || Help.IsSelected || Credits.IsSelected || Coordinates.IsSelected || Codes.IsSelected || Time.IsSelected || ItemTree.IsSelected)
+         if (Debug.IsSelected || Help.IsSelected || Credits.IsSelected || Other.IsSelected || Codes.IsSelected)
          {
             Save.IsEnabled = false;
             Refresh.IsEnabled = Debug.IsSelected;

@@ -93,22 +93,8 @@
     <Compile Include="GetDotNetVersion.cs" />
     <Compile Include="IpAddress.cs" />
     <Compile Include="Item.cs" />
-    <Compile Include="Json\JsonViewer.xaml.cs">
-      <DependentUpon>JsonViewer.xaml</DependentUpon>
-    </Compile>
     <Compile Include="MemAreas.cs" />
     <Compile Include="TcpConn.cs" />
-    <Compile Include="Json\JPropertyDataTemplateSelector.cs" />
-    <Compile Include="Json\ComplexPropertyMethodToValueConverter.cs" />
-    <Compile Include="Json\JArrayLengthConverter.cs" />
-    <Compile Include="Json\JPropertyTypeToColorConverter.cs" />
-    <Compile Include="Json\JValueConverter.cs" />
-    <Compile Include="Json\JValueTypeToColorConverter.cs" />
-    <Compile Include="Json\MethodToValueConverter.cs" />
-    <Page Include="Json\JsonViewer.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -144,7 +130,7 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
-    <EmbeddedResource Include="items.json" />
+    <None Include="items.json" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -169,7 +155,7 @@
     <Resource Include="icon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="version.txt" />
+    <None Include="version.txt" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\expand28.png" />

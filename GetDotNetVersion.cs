@@ -34,7 +34,7 @@ namespace BotwTrainer
         {
             if (releaseKey >= 460798)
             {
-                return "4.7 or later";
+                return "4.7+";
             }
             if (releaseKey >= 394802)
             {

@@ -38,18 +38,18 @@ namespace BotwTrainer.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("https://raw.githubusercontent.com/joffnerd/botw-trainer/master/")]
-        public string VersionUrl {
+        public string GitUrl {
             get {
-                return ((string)(this["VersionUrl"]));
+                return ((string)(this["GitUrl"]));
             }
             set {
-                this["VersionUrl"] = value;
+                this["GitUrl"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("4.2.2")]
+        [global::System.Configuration.DefaultSettingValueAttribute("4.2.3")]
         public string CurrentVersion {
             get {
                 return ((string)(this["CurrentVersion"]));
