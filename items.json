@@ -1375,6 +1375,15 @@
          "Armor_176_Head": {
             "Name": "Korok Mask"
          },
+         "Armor_179_Head": {
+            "Name": "Royal Guard Cap"
+         },
+         "Armor_179_Upper": {
+            "Name": "Royal Guard Uniform"
+         },
+         "Armor_179_Lower": {
+            "Name": "Royal Guard Boots"
+         },
          "Armor_181_Head": {
             "Name": "Vah Ruta's Devine Helm"
          },
@@ -1386,6 +1395,9 @@
          },
          "Armor_184_Head": {
             "Name": "Vah Naboris Divine Helm"
+         },
+         "Armor_185_Head": {
+            "Name": "Salager Headwear"
          },
          "Armor_186_Head": {
             "Name": "Vah Ruta's Devine Helm *"
