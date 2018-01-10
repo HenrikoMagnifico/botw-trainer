@@ -6,287 +6,298 @@
       mc:Ignorable="d"
       Title="BOTW Trainer (PAL/NTSC 1.4.1) |" Height="700" Width="1020">
 
-   <Grid Margin="10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-      <Grid.RowDefinitions>
-         <RowDefinition Height="50" />
-         <RowDefinition Height="*"/>
-         <RowDefinition Height="40"/>
-         <RowDefinition Height="15"/>
-      </Grid.RowDefinitions>
+    <Grid Margin="10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50" />
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="15"/>
+        </Grid.RowDefinitions>
 
-      <Canvas Grid.Row="0" Margin="0" HorizontalAlignment="Stretch">
-         <TextBox x:Name="IpAddress" HorizontalAlignment="Left" Height="21" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="100" Canvas.Left="4" Canvas.Top="13" Visibility="Visible"/>
+        <Canvas Grid.Row="0" Margin="0" HorizontalAlignment="Stretch">
+            <TextBox x:Name="IpAddress" HorizontalAlignment="Left" Height="21" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="100" Canvas.Left="10" Canvas.Top="7" Visibility="Visible"/>
 
-         <CheckBox x:Name="GetBufferSize" Content="Get Buffer Size" Canvas.Left="209" Canvas.Top="16" IsChecked="True"/>
+            <CheckBox x:Name="GetBufferSize" Content="Get Buffer Size"  Canvas.Left="10" Canvas.Top="33" IsChecked="True"/>
 
-         <Button x:Name="Connect" Content="Connect" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Click="ConnectClick" Canvas.Left="120" Canvas.Top="13" />
+            <Button x:Name="Connect" Content="Connect" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Click="ConnectClick" Canvas.Left="131" Canvas.Top="13" RenderTransformOrigin="0.683,0.215" Height="23" />
 
-         <Button x:Name="Disconnect" Content="Disconnect" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Click="DisconnectClick" IsEnabled="False" Canvas.Left="120" Canvas.Top="13" Visibility="Hidden"/>
+            <Button x:Name="Disconnect" Content="Disconnect" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Click="DisconnectClick" IsEnabled="False" Canvas.Left="120" Canvas.Top="13" Visibility="Hidden"/>
 
-         <Button x:Name="LoadItems" Content="Load Items" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top" Width="75" Click="LoadItemsClick" Canvas.Left="360" Canvas.Top="13" IsEnabled="False" />
+            <StackPanel HorizontalAlignment="Left" Orientation="horizontal" Margin="0" VerticalAlignment="Center" Width="180" Canvas.Left="220" Canvas.Top="13" IsEnabled="True" RenderTransformOrigin="0.974,0.455">
+                <TextBlock HorizontalAlignment="Left" Width="75" VerticalAlignment="Center">Botw Version</TextBlock>
+                <ComboBox HorizontalAlignment="Right" Width="80" RenderTransformOrigin="0.645,1.773" 
+                          x:Name="VersionSelector" 
+                          DropDownClosed="VersionSelector_DropDownClosed"
+                          ItemsSource="{Binding Property}"
+                          IsSynchronizedWithCurrentItem="True"
+                          Text="Choose">
+                </ComboBox>
+            </StackPanel>
 
-         <TextBlock Canvas.Right="10" Canvas.Top="14" Canvas.Left="555">           
+            <Button x:Name="LoadItems" Content="Load Items" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top" Width="75" Click="LoadItemsClick" Canvas.Left="400" Canvas.Top="13" IsEnabled="False" />
+
+            <TextBlock Canvas.Right="10" Canvas.Top="14" Canvas.Left="555">           
                 <Hyperlink Foreground="SeaGreen" FontSize="14" NavigateUri="https://github.com/joffnerd/botw-trainer/blob/master/README.md" RequestNavigate="HyperlinkRequestNavigate">
                     https://github.com/joffnerd/botw-trainer/blob/master/README.md
                 </Hyperlink>
-         </TextBlock>
+            </TextBlock>
 
-      </Canvas>
+        </Canvas>
 
-      <TabControl x:Name="TabControl" HorizontalAlignment="Stretch" VerticalContentAlignment="Stretch" VerticalAlignment="Top" IsEnabled="False" Grid.Row="1" SelectedIndex="0"  SelectionChanged="TabControlSelectionChanged">
+        <TabControl x:Name="TabControl" HorizontalAlignment="Stretch" VerticalContentAlignment="Stretch" VerticalAlignment="Top" IsEnabled="False" Grid.Row="1" SelectedIndex="0"  SelectionChanged="TabControlSelectionChanged">
 
-         <TabItem Header="Weapons" x:Name="Weapons" Margin="0,0,0,0" Background="CadetBlue" IsEnabled="False"/>
+            <TabItem Header="Weapons" x:Name="Weapons" Margin="0,0,0,0" Background="CadetBlue" IsEnabled="False"/>
 
-         <TabItem Header="Bows" x:Name="Bows" Margin="0,0,0,0" Background="CadetBlue" IsEnabled="False"/>
+            <TabItem Header="Bows" x:Name="Bows" Margin="0,0,0,0" Background="CadetBlue" IsEnabled="False"/>
 
-         <TabItem Header="Shields" x:Name="Shields" Margin="0,0,0,0" Background="CadetBlue" IsEnabled="False"/>
+            <TabItem Header="Shields" x:Name="Shields" Margin="0,0,0,0" Background="CadetBlue" IsEnabled="False"/>
 
-         <TabItem Header="Armor" x:Name="Armor" Margin="0,0,0,0" Background="CadetBlue" IsEnabled="False"/>
+            <TabItem Header="Armor" x:Name="Armor" Margin="0,0,0,0" Background="CadetBlue" IsEnabled="False"/>
 
-         <TabItem Header="Arrows" x:Name="Arrows" Margin="0,0,0,0" Background="PaleVioletRed" IsEnabled="False"/>
+            <TabItem Header="Arrows" x:Name="Arrows" Margin="0,0,0,0" Background="PaleVioletRed" IsEnabled="False"/>
 
-         <TabItem Header="Materials" x:Name="Materials" Margin="0,0,0,0" Background="PaleVioletRed" IsEnabled="False"/>
+            <TabItem Header="Materials" x:Name="Materials" Margin="0,0,0,0" Background="PaleVioletRed" IsEnabled="False"/>
 
-         <TabItem Header="Food" x:Name="Food" Margin="0,0,0,0" Background="PaleVioletRed" IsEnabled="False"/>
+            <TabItem Header="Food" x:Name="Food" Margin="0,0,0,0" Background="PaleVioletRed" IsEnabled="False"/>
 
-         <TabItem Header="Key Items" x:Name="KeyItems" Margin="0,0,0,0" Background="PaleVioletRed" IsEnabled="False"/>
+            <TabItem Header="Key Items" x:Name="KeyItems" Margin="0,0,0,0" Background="PaleVioletRed" IsEnabled="False"/>
 
-         <TabItem Header="Debug" x:Name="Debug" Margin="0,0,0,0" IsEnabled="False">
+            <TabItem Header="Debug" x:Name="Debug" Margin="0,0,0,0" IsEnabled="False">
 
-            <Grid>
-               <Grid.RowDefinitions>
-                  <RowDefinition Height="30"/>
-                  <RowDefinition Height="*"/>
-               </Grid.RowDefinitions>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
 
-               <Button x:Name="Export" Content="Export to CSV" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="75" Click="ExportClick" Grid.Row="0" />
+                    <Button x:Name="Export" Content="Export to CSV" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="75" Click="ExportClick" Grid.Row="0" />
 
-               <DataGrid x:Name="DebugGrid" AutoGenerateColumns="False" Margin="10,10,0,0" ClipboardCopyMode="IncludeHeader" Height="430" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1">
-                  <DataGrid.Columns>
-                     <DataGridTextColumn Header="Id" Width="150" Binding="{Binding Id}"/>
-                     <DataGridTextColumn Header="Name" Width="160" Binding="{Binding Name}"/>
-                     <DataGridTextColumn Header="Address" Width="65" Binding="{Binding BaseAddressHex, Mode=OneWay}"/>
-                     <DataGridTextColumn Header="Type" Width="70" Binding="{Binding PageName, Mode=OneWay}"/>
-                     <DataGridTextColumn Header="Value" Width="65" Binding="{Binding Value}"/>
-                     <DataGridCheckBoxColumn Header="Equipped" Width="40" Binding="{Binding Equipped, Mode=OneWay}" IsReadOnly="True"/>
-                     <DataGridCheckBoxColumn Header="Current" Width="40" Binding="{Binding Current, Mode=OneWay}" IsReadOnly="True"/>
-                     <DataGridTextColumn Header="Page" Width="40" Binding="{Binding Unknown}"/>
-                     <DataGridTextColumn Header="Modifier1" Width="65" Binding="{Binding Modifier1Value, Mode=OneWay}"/>
-                     <DataGridTextColumn Header="Modifier2" Width="65" Binding="{Binding Modifier2Value, Mode=OneWay}"/>
-                     <DataGridTextColumn Header="Modifier3" Width="65" Binding="{Binding Modifier3Value, Mode=OneWay}"/>
-                     <DataGridTextColumn Header="Modifier4" Width="65" Binding="{Binding Modifier4Value, Mode=OneWay}"/>
-                     <DataGridTextColumn Header="Modifier5" Width="65" Binding="{Binding Modifier5Value, Mode=OneWay}"/>
-                  </DataGrid.Columns>
-               </DataGrid>
-            </Grid>
-
-
-         </TabItem>
-
-         <TabItem Header="Codes" x:Name="Codes" Margin="0,0,0,0" Background="Yellow">
-
-            <Grid>
-               <Grid.RowDefinitions>
-                  <RowDefinition Height="*"/>
-               </Grid.RowDefinitions>
-
-               <Grid.ColumnDefinitions>
-                  <ColumnDefinition Width="*"></ColumnDefinition>
-                  <ColumnDefinition Width="*"></ColumnDefinition>
-               </Grid.ColumnDefinitions>
-
-               <ScrollViewer x:Name="CodeScroll" VerticalAlignment="Top" Margin="0,10,0,0" Grid.Column="0">
-                  <WrapPanel x:Name="CodesWrap" VerticalAlignment="Top" Margin="0">
-                     <DataGrid x:Name="CodesGrid" AutoGenerateColumns="False" Margin="10" GotFocus="CodesGrid_GotFocus">
+                    <DataGrid x:Name="DebugGrid" AutoGenerateColumns="False" Margin="10,10,0,0" ClipboardCopyMode="IncludeHeader" Height="430" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1">
                         <DataGrid.Columns>
-                           <DataGridTextColumn Header="Name" Width="350" Binding="{Binding Name}" IsReadOnly="True"/>
-                           <DataGridCheckBoxColumn Header="Enabled" Width="70" Binding="{Binding Enabled}" />
+                            <DataGridTextColumn Header="Id" Width="150" Binding="{Binding Id}"/>
+                            <DataGridTextColumn Header="Name" Width="160" Binding="{Binding Name}"/>
+                            <DataGridTextColumn Header="Address" Width="65" Binding="{Binding BaseAddressHex, Mode=OneWay}"/>
+                            <DataGridTextColumn Header="Type" Width="70" Binding="{Binding PageName, Mode=OneWay}"/>
+                            <DataGridTextColumn Header="Value" Width="65" Binding="{Binding Value}"/>
+                            <DataGridCheckBoxColumn Header="Equipped" Width="40" Binding="{Binding Equipped, Mode=OneWay}" IsReadOnly="True"/>
+                            <DataGridCheckBoxColumn Header="Current" Width="40" Binding="{Binding Current, Mode=OneWay}" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="Page" Width="40" Binding="{Binding Unknown}"/>
+                            <DataGridTextColumn Header="Modifier1" Width="65" Binding="{Binding Modifier1Value, Mode=OneWay}"/>
+                            <DataGridTextColumn Header="Modifier2" Width="65" Binding="{Binding Modifier2Value, Mode=OneWay}"/>
+                            <DataGridTextColumn Header="Modifier3" Width="65" Binding="{Binding Modifier3Value, Mode=OneWay}"/>
+                            <DataGridTextColumn Header="Modifier4" Width="65" Binding="{Binding Modifier4Value, Mode=OneWay}"/>
+                            <DataGridTextColumn Header="Modifier5" Width="65" Binding="{Binding Modifier5Value, Mode=OneWay}"/>
                         </DataGrid.Columns>
-                     </DataGrid>
-                  </WrapPanel>
-               </ScrollViewer>
+                    </DataGrid>
+                </Grid>
 
-               <WrapPanel VerticalAlignment="Top" Margin="10" Grid.Column="1">
-                  <RichTextBox IsReadOnly="True" IsDocumentEnabled="False" Margin="10" BorderThickness="0">
-                     <FlowDocument>
-                        <Paragraph FontSize="14">
-                           Codes found in your XML file are listed here.
-                        </Paragraph>
 
-                        <Paragraph FontSize="14">
-                           To enable or disable them click the checkbox next to each code name.
-                        </Paragraph>
+            </TabItem>
 
-                        <Paragraph FontSize="14">
-                           Click 'Send Codes' to send them to the Wii U. Sending codes also updates the xml file.
-                        </Paragraph>
-                     </FlowDocument>
-                  </RichTextBox>
+            <TabItem Header="Codes" x:Name="Codes" Margin="0,0,0,0" Background="Yellow">
 
-                  <Button x:Name="SendCodes" Margin="20,0,0,0" Click="SendCodes_Click" Width="100">Send Codes</Button>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
 
-                  <Button x:Name="ReloadXml" Margin="20,0,0,0" Click="ReloadXml_Click" Width="100">Reload XML</Button>
-               </WrapPanel>
-
-               
-            </Grid>
-         </TabItem>
-
-         <TabItem Header="Other" x:Name="Other" Margin="0" Background="Yellow">
-
-            <Grid Margin="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-               <Grid.RowDefinitions>
-                  <RowDefinition Height="*"/>
-                  <RowDefinition Height="*"/>
-               </Grid.RowDefinitions>
-
-               <Grid.ColumnDefinitions>
-                  <ColumnDefinition Width="*"></ColumnDefinition>
-               </Grid.ColumnDefinitions>
-
-               <StackPanel Grid.Row="0">
-                  <Grid Margin="10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                     <Grid.RowDefinitions>
-                        <RowDefinition Height="13*"/>
-                        <RowDefinition Height="13*"/>
-                        <RowDefinition Height="18*"/>
-                        <RowDefinition Height="13*"/>
-                        <RowDefinition Height="17*"/>
-                        <RowDefinition Height="7*"/>
-                        <RowDefinition Height="2*"/>
-                        <RowDefinition Height="0*"/>
-                        <RowDefinition Height="21*"/>
-                        <RowDefinition Height="0*"/>
-                        <RowDefinition Height="0*"/>
-                     </Grid.RowDefinitions>
-
-                     <Grid.ColumnDefinitions>
+                    <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"></ColumnDefinition>
                         <ColumnDefinition Width="*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+
+                    <ScrollViewer x:Name="CodeScroll" VerticalAlignment="Top" Margin="0,10,0,0" Grid.Column="0">
+                        <WrapPanel x:Name="CodesWrap" VerticalAlignment="Top" Margin="0">
+                            <DataGrid x:Name="CodesGrid" AutoGenerateColumns="False" Margin="10" GotFocus="CodesGrid_GotFocus">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Name" Width="350" Binding="{Binding Name}" IsReadOnly="True"/>
+                                    <DataGridCheckBoxColumn Header="Enabled" Width="70" Binding="{Binding Enabled}" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </WrapPanel>
+                    </ScrollViewer>
+
+                    <WrapPanel VerticalAlignment="Top" Margin="10" Grid.Column="1">
+                        <RichTextBox IsReadOnly="True" IsDocumentEnabled="False" Margin="10" BorderThickness="0">
+                            <FlowDocument>
+                                <Paragraph FontSize="14">
+                                    Codes found in your XML file are listed here.
+                                </Paragraph>
+
+                                <Paragraph FontSize="14">
+                                    To enable or disable them click the checkbox next to each code name.
+                                </Paragraph>
+
+                                <Paragraph FontSize="14">
+                                    Click 'Send Codes' to send them to the Wii U. Sending codes also updates the xml file.
+                                </Paragraph>
+                            </FlowDocument>
+                        </RichTextBox>
+
+                        <Button x:Name="SendCodes" Margin="20,0,0,0" Click="SendCodes_Click" Width="100">Send Codes</Button>
+
+                        <Button x:Name="ReloadXml" Margin="20,0,0,0" Click="ReloadXml_Click" Width="100">Reload XML</Button>
+                    </WrapPanel>
+
+
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="Other" x:Name="Other" Margin="0" Background="Yellow">
+
+                <Grid Margin="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"></ColumnDefinition>
-                        <ColumnDefinition Width="*"></ColumnDefinition>
-                     </Grid.ColumnDefinitions>
+                    </Grid.ColumnDefinitions>
 
-                     <Label Content="Track your coordinates:" Margin="25,0,10,0" Grid.Row="0" Grid.Column="0" />
+                    <StackPanel Grid.Row="0">
+                        <Grid Margin="10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="13*"/>
+                                <RowDefinition Height="13*"/>
+                                <RowDefinition Height="18*"/>
+                                <RowDefinition Height="13*"/>
+                                <RowDefinition Height="17*"/>
+                                <RowDefinition Height="7*"/>
+                                <RowDefinition Height="2*"/>
+                                <RowDefinition Height="0*"/>
+                                <RowDefinition Height="21*"/>
+                                <RowDefinition Height="0*"/>
+                                <RowDefinition Height="0*"/>
+                            </Grid.RowDefinitions>
 
-                     <Label x:Name="CoordsAddress" Content="-" Margin="0" Grid.Row="1" Grid.Column="0" />
-                     <CheckBox x:Name="EnableCoords" Grid.Row="0" Grid.Column="0" Checked="EnableCoordsOnChecked" Width="20" HorizontalAlignment="Left" Margin="4,6,0,0" />
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"></ColumnDefinition>
+                                <ColumnDefinition Width="*"></ColumnDefinition>
+                                <ColumnDefinition Width="*"></ColumnDefinition>
+                                <ColumnDefinition Width="*"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
 
-                     <Label x:Name="CoordsX" Content="0.0" Grid.Row="2" Grid.Column="0" Margin="14,4,0,0"/>
-                     <Label x:Name="CoordsY" Content="0.0" Grid.Row="3" Grid.Column="0" Margin="14,4,0,0"/>
-                     <Label x:Name="CoordsZ" Content="0.0" Grid.Row="4" Grid.Column="0" Margin="14,4,0,0"/>
-                     <Label Content="Enter coordinates or select a destination and click GO." Margin="124,0,117,0" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" />
+                            <Label Content="Track your coordinates:" Margin="25,0,10,0" Grid.Row="0" Grid.Column="0" />
 
-                     <Label Content="Some destinations may lock your game if they are too far." Margin="113,0,128,0" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" />
+                            <Label x:Name="CoordsAddress" Content="-" Margin="0" Grid.Row="1" Grid.Column="0" />
+                            <CheckBox x:Name="EnableCoords" Grid.Row="0" Grid.Column="0" Checked="EnableCoordsOnChecked" Width="20" HorizontalAlignment="Left" Margin="4,6,0,0" />
 
-                     <Label Content="X" Margin="0,4,222,5" Grid.Row="2" Grid.Column="0" />
-                     <Label Content="Y" Margin="0,4,222,5" Grid.Row="3" Grid.Column="0" />
-                     <Label Content="Z" Margin="0,4,222,5" Grid.Row="4" Grid.Column="0" />
+                            <Label x:Name="CoordsX" Content="0.0" Grid.Row="2" Grid.Column="0" Margin="14,4,0,0"/>
+                            <Label x:Name="CoordsY" Content="0.0" Grid.Row="3" Grid.Column="0" Margin="14,4,0,0"/>
+                            <Label x:Name="CoordsZ" Content="0.0" Grid.Row="4" Grid.Column="0" Margin="14,4,0,0"/>
+                            <Label Content="Enter coordinates or select a destination and click GO." Margin="124,0,117,0" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" />
 
-                     <Label Content="X" Margin="0,0,222,10" Grid.Row="2" Grid.Column="1" />
-                     <Label Content="Y" Margin="80,0,133,10" Grid.Row="2" Grid.Column="1" />
-                     <Label Content="Z" Margin="158,0,59,10" Grid.Row="2" Grid.Column="1" />
+                            <Label Content="Some destinations may lock your game if they are too far." Margin="113,0,128,0" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" />
 
-                     <ComboBox x:Name="ShrineList" Grid.Row="3" Width="125" SelectionChanged="ShrineListChanged" SelectedValuePath="Tag" HorizontalAlignment="Left" Text="Select Shrine..." IsEditable="True" IsReadOnly="True" Grid.Column="1" Margin="0,6,0,6"/>
+                            <Label Content="X" Margin="0,4,222,5" Grid.Row="2" Grid.Column="0" />
+                            <Label Content="Y" Margin="0,4,222,5" Grid.Row="3" Grid.Column="0" />
+                            <Label Content="Z" Margin="0,4,222,5" Grid.Row="4" Grid.Column="0" />
 
-                     <ComboBox x:Name="TowerList" Grid.Row="3" Width="125" SelectionChanged="TowerListChanged" SelectedValuePath="Tag" HorizontalAlignment="Left" Text="Select Tower..." IsEditable="True" IsReadOnly="True" Grid.Column="1" Margin="173,6,0,6" Grid.ColumnSpan="2"/>
+                            <Label Content="X" Margin="0,0,222,10" Grid.Row="2" Grid.Column="1" />
+                            <Label Content="Y" Margin="80,0,133,10" Grid.Row="2" Grid.Column="1" />
+                            <Label Content="Z" Margin="158,0,59,10" Grid.Row="2" Grid.Column="1" />
 
-                     <ComboBox x:Name="RanchList" Grid.Row="4" Width="125" SelectionChanged="RanchListChanged" SelectedValuePath="Tag" HorizontalAlignment="Left" Text="Select Ranch..." IsEditable="True" IsReadOnly="True" Grid.Column="1" Margin="0,6,0,6" />
+                            <ComboBox x:Name="ShrineList" Grid.Row="3" Width="125" SelectionChanged="ShrineListChanged" SelectedValuePath="Tag" HorizontalAlignment="Left" Text="Select Shrine..." IsEditable="True" IsReadOnly="True" Grid.Column="1" Margin="0,6,0,6"/>
 
-                     <ComboBox x:Name="MiscList" Grid.Row="4" Width="125" SelectionChanged="MiscListChanged" SelectedValuePath="Tag" HorizontalAlignment="Left" Text="Select Location..." IsEditable="True" IsReadOnly="True" Grid.Column="1" Margin="173,6,0,6" Grid.ColumnSpan="2"/>
-                     <TextBox x:Name="CoordsXValue" Text="-568" Grid.Row="2" Grid.Column="1" Width="60" HorizontalAlignment="Left" Margin="20,4,00,10"/>
-                     <TextBox x:Name="CoordsYValue" Text="246" Grid.Row="2" Grid.Column="1" Width="60" HorizontalAlignment="Left" Margin="98,4,0,10"/>
-                     <TextBox x:Name="CoordsZValue" Text="1697" Grid.Row="2" Grid.Column="1" Width="60" HorizontalAlignment="Left" Margin="178,4,0,10"/>
-                     <Button Content="Go" Grid.Row="2" Grid.Column="1" Width="58" Click="CoordsGoClick" HorizontalAlignment="Left" Margin="256,4,0,10" Grid.ColumnSpan="2"/>
-                  </Grid>
-               </StackPanel>
+                            <ComboBox x:Name="TowerList" Grid.Row="3" Width="125" SelectionChanged="TowerListChanged" SelectedValuePath="Tag" HorizontalAlignment="Left" Text="Select Tower..." IsEditable="True" IsReadOnly="True" Grid.Column="1" Margin="173,6,0,6" Grid.ColumnSpan="2"/>
 
-               <Canvas Margin="0,30,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1" Height="100">
-                  <Label Content="Current Hour" Height="26" Margin="0" Canvas.Left="11" Canvas.Top="19" ToolTip="Change the current time in the game by moving the slider and clicking update"/>
+                            <ComboBox x:Name="RanchList" Grid.Row="4" Width="125" SelectionChanged="RanchListChanged" SelectedValuePath="Tag" HorizontalAlignment="Left" Text="Select Ranch..." IsEditable="True" IsReadOnly="True" Grid.Column="1" Margin="0,6,0,6" />
 
-                  <TextBox x:Name="CurrentTime" Height="25" Width="30" Margin="0" Canvas.Left="154" Canvas.Top="20" IsReadOnly="True" Text="{Binding ElementName=TimeSlider,Path=Value}"/>
+                            <ComboBox x:Name="MiscList" Grid.Row="4" Width="125" SelectionChanged="MiscListChanged" SelectedValuePath="Tag" HorizontalAlignment="Left" Text="Select Location..." IsEditable="True" IsReadOnly="True" Grid.Column="1" Margin="173,6,0,6" Grid.ColumnSpan="2"/>
+                            <TextBox x:Name="CoordsXValue" Text="-568" Grid.Row="2" Grid.Column="1" Width="60" HorizontalAlignment="Left" Margin="20,4,00,10"/>
+                            <TextBox x:Name="CoordsYValue" Text="246" Grid.Row="2" Grid.Column="1" Width="60" HorizontalAlignment="Left" Margin="98,4,0,10"/>
+                            <TextBox x:Name="CoordsZValue" Text="1697" Grid.Row="2" Grid.Column="1" Width="60" HorizontalAlignment="Left" Margin="178,4,0,10"/>
+                            <Button Content="Go" Grid.Row="2" Grid.Column="1" Width="58" Click="CoordsGoClick" HorizontalAlignment="Left" Margin="256,4,0,10" Grid.ColumnSpan="2"/>
+                        </Grid>
+                    </StackPanel>
 
-                  <Button Content="Update" Canvas.Top="20" Canvas.Left="201" Height="25" Margin="0" Click="ChangeTimeClick" Width="55"/>
+                    <Canvas Margin="0,30,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1" Height="100">
+                        <Label Content="Current Hour" Height="26" Margin="0" Canvas.Left="11" Canvas.Top="19" ToolTip="Change the current time in the game by moving the slider and clicking update"/>
 
-                  <Slider x:Name="TimeSlider" Width="240" Height="20" Orientation="Horizontal" Minimum="0" Maximum="23" Value="12" Canvas.Top="53" Canvas.Left="10" IsSnapToTickEnabled="True" TickFrequency="1" Margin="0" />
-               </Canvas>
+                        <TextBox x:Name="CurrentTime" Height="25" Width="30" Margin="0" Canvas.Left="154" Canvas.Top="20" IsReadOnly="True" Text="{Binding ElementName=TimeSlider,Path=Value}"/>
 
-            </Grid>            
+                        <Button Content="Update" Canvas.Top="20" Canvas.Left="201" Height="25" Margin="0" Click="ChangeTimeClick" Width="55"/>
 
-         </TabItem>
+                        <Slider x:Name="TimeSlider" Width="240" Height="20" Orientation="Horizontal" Minimum="0" Maximum="23" Value="12" Canvas.Top="53" Canvas.Left="10" IsSnapToTickEnabled="True" TickFrequency="1" Margin="0" />
+                    </Canvas>
 
-         <TabItem Header="Help" x:Name="Help" Margin="0" Background="SeaGreen">
-            <WrapPanel>
-               <RichTextBox IsReadOnly="True" IsDocumentEnabled="False" Margin="10" BorderThickness="0">
-                  <FlowDocument>
-                     <Paragraph FontWeight="Bold" FontSize="14">
-                        <Run Text="Help"/>
-                     </Paragraph>
-                     <Paragraph FontSize="13">
-                        <Run FontWeight="Bold" Text="Debug tab "/>
-                        <Run Text="has no function other than a complete list of current items"/>
-                        <Run Text="."/>
-                        <Run Text=" You can export the data to csv."/>
-                     </Paragraph>
-                     <Paragraph FontSize="13">
-                        <Run FontWeight="Bold" Text="Modifier"/>
-                        <Run Text=" boxes aren't always used. For food see post: https://gbatemp.net/threads/post-your-wiiu-cheat-codes-here.395443/page-303#post-7156278"/>
-                     </Paragraph>
-                  </FlowDocument>
-               </RichTextBox>
-            </WrapPanel>
-         </TabItem>
+                </Grid>
 
-         <TabItem Header="Credits" x:Name="Credits" Margin="0" Background="SeaGreen">
-            <WrapPanel>
-               <Label Content="Bully"></Label>
-               <Label Content="CosmoCortney"></Label>
-               <Label Content="5pmeternal"></Label>
-               <Label Content="AcedArmy"></Label>
-               <Label Content="DarkFlare69"></Label>
-               <Label Content="ItchyOwned"></Label>
-               <Label Content="Shinzuya"></Label>
-               <Label Content="PandaOnSmack"></Label>
-               <Label Content="Shadow LAG"></Label>
-               <Label Content="Missing Number"></Label>
-               <Label Content="Saber"></Label>
-               <Label Content="TheWord21"></Label>
-               <Label Content="Deathwolf1000"></Label>
-               <Label Content="awideen"></Label>
-               <Label Content="Paula"></Label>
-               <Label Content="mancoast"></Label>
-               <Label Content="skoolzout1"></Label>
-               <Label Content="RandomUser"></Label>
-            </WrapPanel>
-         </TabItem>
+            </TabItem>
 
-         <TabItem Header="Error Log" x:Name="Error" Margin="0" Background="OrangeRed" IsEnabled="False">
-            <WrapPanel>
-               <RichTextBox x:Name="ErrorLog" IsReadOnly="True" Margin="10" BorderThickness="0">
-                  <FlowDocument>
-                     <Paragraph FontSize="13">
-                        Error data will appear here
-                     </Paragraph>
-                  </FlowDocument>
-               </RichTextBox>
-            </WrapPanel>
-         </TabItem>
-      </TabControl>
+            <TabItem Header="Help" x:Name="Help" Margin="0" Background="SeaGreen">
+                <WrapPanel>
+                    <RichTextBox IsReadOnly="True" IsDocumentEnabled="False" Margin="10" BorderThickness="0">
+                        <FlowDocument>
+                            <Paragraph FontWeight="Bold" FontSize="14">
+                                <Run Text="Help"/>
+                            </Paragraph>
+                            <Paragraph FontSize="13">
+                                <Run FontWeight="Bold" Text="Debug tab "/>
+                                <Run Text="has no function other than a complete list of current items"/>
+                                <Run Text="."/>
+                                <Run Text=" You can export the data to csv."/>
+                            </Paragraph>
+                            <Paragraph FontSize="13">
+                                <Run FontWeight="Bold" Text="Modifier"/>
+                                <Run Text=" boxes aren't always used. For food see post: https://gbatemp.net/threads/post-your-wiiu-cheat-codes-here.395443/page-303#post-7156278"/>
+                            </Paragraph>
+                        </FlowDocument>
+                    </RichTextBox>
+                </WrapPanel>
+            </TabItem>
 
-      <Canvas Grid.Row="2" Margin="0" HorizontalAlignment="Stretch">
-         <Button x:Name="Refresh" Content="Refresh All" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top" Width="75" Click="LoadItemsClick" Canvas.Top="10" IsEnabled="False" Canvas.Left="0" />
+            <TabItem Header="Credits" x:Name="Credits" Margin="0" Background="SeaGreen">
+                <WrapPanel>
+                    <Label Content="Bully"></Label>
+                    <Label Content="CosmoCortney"></Label>
+                    <Label Content="5pmeternal"></Label>
+                    <Label Content="AcedArmy"></Label>
+                    <Label Content="DarkFlare69"></Label>
+                    <Label Content="ItchyOwned"></Label>
+                    <Label Content="Shinzuya"></Label>
+                    <Label Content="PandaOnSmack"></Label>
+                    <Label Content="Shadow LAG"></Label>
+                    <Label Content="Missing Number"></Label>
+                    <Label Content="Saber"></Label>
+                    <Label Content="TheWord21"></Label>
+                    <Label Content="Deathwolf1000"></Label>
+                    <Label Content="awideen"></Label>
+                    <Label Content="Paula"></Label>
+                    <Label Content="mancoast"></Label>
+                    <Label Content="skoolzout1"></Label>
+                    <Label Content="RandomUser"></Label>
+                </WrapPanel>
+            </TabItem>
 
-         <Button x:Name="Save" Content="Save" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top" Width="75" Click="SaveClick" Canvas.Left="109" Canvas.Top="10" IsEnabled="False" />
+            <TabItem Header="Error Log" x:Name="Error" Margin="0" Background="OrangeRed" IsEnabled="False">
+                <WrapPanel>
+                    <RichTextBox x:Name="ErrorLog" IsReadOnly="True" Margin="10" BorderThickness="0">
+                        <FlowDocument>
+                            <Paragraph FontSize="13">
+                                Error data will appear here
+                            </Paragraph>
+                        </FlowDocument>
+                    </RichTextBox>
+                </WrapPanel>
+            </TabItem>
+        </TabControl>
 
-         <Label x:Name="Notification" Content="You can only save if a value has been changed." Canvas.Right="10" Canvas.Top="7" Width="770" Canvas.Left="200"/>
+        <Canvas Grid.Row="2" Margin="0" HorizontalAlignment="Stretch">
+            <Button x:Name="Refresh" Content="Refresh All" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top" Width="75" Click="LoadItemsClick" Canvas.Top="10" IsEnabled="False" Canvas.Left="0" />
 
-         <Button x:Name="Test" Content="Test" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top" Width="75" Click="TestClick" Canvas.Right="10" Canvas.Top="10" RenderTransformOrigin="2.867,0.4" IsEnabled="False" />
+            <Button x:Name="Save" Content="Save" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top" Width="75" Click="SaveClick" Canvas.Left="109" Canvas.Top="10" IsEnabled="False" />
 
-      </Canvas>
+            <Label x:Name="Notification" Content="You can only save if a value has been changed." Canvas.Right="10" Canvas.Top="7" Width="770" Canvas.Left="200"/>
 
-      <Grid Grid.Row="3" HorizontalAlignment="Stretch">
-         <ProgressBar Height="15" x:Name="Progress"  Foreground="#FF138127" />
-         <TextBlock x:Name="ProgressText" HorizontalAlignment="Center" VerticalAlignment="Center" Text="0/0"/>
-      </Grid>
-   </Grid>
+            <Button x:Name="Test" Content="Test" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top" Width="75" Click="TestClick" Canvas.Right="10" Canvas.Top="10" RenderTransformOrigin="2.867,0.4" IsEnabled="False" />
+
+        </Canvas>
+
+        <Grid Grid.Row="3" HorizontalAlignment="Stretch">
+            <ProgressBar Height="15" x:Name="Progress"  Foreground="#FF138127" />
+            <TextBlock x:Name="ProgressText" HorizontalAlignment="Center" VerticalAlignment="Center" Text="0/0"/>
+        </Grid>
+    </Grid>
 </Window>

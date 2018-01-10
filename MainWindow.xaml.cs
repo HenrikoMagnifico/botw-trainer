@@ -25,33 +25,41 @@
 
    public partial class MainWindow
    {
-      // The original list of values that take effect when you save / load
-      private const uint SaveItemStart = 0x3FDF91C8; //0x3FB2A550;
-
-      private const uint CodeHandlerStart = 0x01133000;
-
-      private const uint CodeHandlerEnd = 0x01134300;
-
-      private const uint CodeHandlerEnabled = 0x10014CFC;
-
       private readonly List<TextBox> tbChanged = new List<TextBox>();
 
       private readonly List<ComboBox> ddChanged = new List<ComboBox>();
 
       private readonly List<CheckBox> cbChanged = new List<CheckBox>();
 
-      // Technically your first item as they are stored in reverse so we work backwards
-      private const uint ItemEnd = 0x43DC5158; //0x43DC4B18; //0x43AF4B14;
-
       private int itemTotal = 0;
+
+      private List<string> versions;
+
+      private BotwVersion versionedItemOffsets
+      {
+         get
+         {
+            if (!String.IsNullOrWhiteSpace(Settings.Default.BotwVersion))
+            {
+               return offsets.versions[Settings.Default.BotwVersion];
+            }
+            else
+            {
+               LogError(new ArgumentException(string.Format("Invalid game version string '{0}'", Settings.Default.BotwVersion)));
+               return null;
+            }
+         }
+      }
+
+      private Offsets offsets;
+
+      private ItemDetails itemDetails;
 
       private List<Item> items;
 
       private List<Code> codes;
 
       private XDocument codesXml;
-
-      private JToken json;
 
       private TcpConn tcpConn;
 
@@ -85,79 +93,68 @@
 
          CheckLatestVersion();
 
-         LoadJsonData();
+         try
+         {
+            LoadOffsets();
+            LoadItemDetails();
+            LoadCodes();
+         }
+         catch (Exception ex)
+         {
+            LogError(ex);
+         }
 
-         LoadCodes();
-
-         items = new List<Item>();         
+         items = new List<Item>();
 
          IpAddress.Text = Settings.Default.IpAddress;
+         VersionSelector.SelectedIndex = VersionSelector.Items.IndexOf(Settings.Default.BotwVersion);
 
          Save.IsEnabled = HasChanged;
       }
 
-      private void LoadJsonData()
+      private void LoadOffsets()
       {
-         var client = new WebClient
-         {
-            BaseAddress = Settings.Default.GitUrl,
-            Encoding = Encoding.UTF8,
-            CachePolicy = new System.Net.Cache.RequestCachePolicy(System.Net.Cache.RequestCacheLevel.BypassCache)
-         };
+         offsets = Offsets.LoadOffsets();
+         versions = new List<string>(offsets.versions.Keys());
+         VersionSelector.ItemsSource = versions;
 
-         client.Headers.Add("Cache-Control", "no-cache");
-         client.DownloadStringCompleted += JsonLoadComplete;
-
-         // try to get current version
-         try
+         if (String.IsNullOrWhiteSpace(Settings.Default.BotwVersion))
          {
-            client.DownloadStringAsync(new Uri(string.Format("{0}{1}", client.BaseAddress, "items.json")));
-         }
-         catch (Exception ex)
-         {
-            LogError(ex, "Error loading current version.");
+            Settings.Default.BotwVersion = offsets.versions.newest().Version;
          }
       }
 
-      private void JsonLoadComplete(object sender, DownloadStringCompletedEventArgs e)
-      {         
-         // try to load json data
+
+      private void LoadItemDetails()
+      {
          try
          {
-            var data = e.Result;
-            json = JObject.Parse(data);
+            itemDetails = ItemDetails.LoadData();
 
             // Shrine data
-            var shrines = json.SelectToken("Shrines").Value<JObject>().Properties().ToList().OrderBy(x => x.Name);
-            foreach (var shrine in shrines)
-            {
-               ShrineList.Items.Add(new ComboBoxItem { Content = shrine.Value["Name"], Tag = shrine.Name });
+            foreach (KeyValuePair<string, LocationData> row in itemDetails.Shrines.OrderBy(x => x.Value.Name)) {
+               ShrineList.Items.Add(new ComboBoxItem { Tag = row.Key, Content = row.Value.Name });
             }
 
             // Tower data
-            var towers = json.SelectToken("Towers").Value<JObject>().Properties().ToList().OrderBy(x => x.Name);
-            foreach (var tower in towers)
-            {
-               TowerList.Items.Add(new ComboBoxItem { Content = tower.Value["Name"], Tag = tower.Name });
+            foreach (KeyValuePair<string, LocationData> row in itemDetails.Towers.OrderBy(x => x.Value.Name)) {
+               TowerList.Items.Add(new ComboBoxItem { Tag = row.Key, Content = row.Value.Name });
             }
 
             // Ranches
-            var ranches = json.SelectToken("Ranches").Value<JObject>().Properties().ToList().OrderBy(x => x.Name);
-            foreach (var ranch in ranches)
-            {
-               RanchList.Items.Add(new ComboBoxItem { Content = ranch.Value["Name"], Tag = ranch.Name });
+            foreach (KeyValuePair<string, LocationData> row in itemDetails.Ranches.OrderBy(x => x.Value.Name)) {
+               RanchList.Items.Add(new ComboBoxItem { Tag = row.Key, Content = row.Value.Name });
             }
 
             // Misc
-            var misc = json.SelectToken("Misc").Value<JObject>().Properties().ToList().OrderBy(x => x.Name);
-            foreach (var m in misc)
+            foreach (KeyValuePair<string, LocationData> row in itemDetails.Misc.OrderBy(x => x.Value.Name))
             {
-               MiscList.Items.Add(new ComboBoxItem { Content = m.Value["Name"], Tag = m.Name });
+               MiscList.Items.Add(new ComboBoxItem { Tag = row.Key, Content = row.Value.Name });
             }
          }
          catch (Exception ex)
          {
-            LogError(ex, "Error loading json.");
+            LogError(ex, "Error loading item details.");
          }
       }
 
@@ -230,12 +227,9 @@
       {
          try
          {
-            itemTotal = gecko.GetInt(0x43D8D6D8); //0x43D8D098
-            // 0x43ABD094 - 1.3.1
-            // 0x43ABD094 - 1.3.0
-            // 0x43C83090
+            itemTotal = gecko.GetInt(versionedItemOffsets.Count); 
 
-            var currentItemAddress = ItemEnd;
+            var currentItemAddress = versionedItemOffsets.End;
 
             for (var x = 1; x <= itemTotal; x++)
             {
@@ -292,7 +286,7 @@
                   Modifier5Value = gecko.ByteToHexBitFiddle(itemData.Skip(108).Take(4).ToArray())
                };
 
-               // look for name in json
+               // look for name in item details list
                var name = GetNameFromId(item.Id, item.PageName);
                item.Name = name;
 
@@ -350,7 +344,7 @@
                      var foundTextBox = (TextBox)FindName("Value_" + item.ValueAddressHex);
                      if (foundTextBox != null)
                      {
-                        var offset = (uint)(SaveItemStart + (y * 0x8));
+                        var offset = (uint)(versionedItemOffsets.Start + (y * 0x8));
                         gecko.WriteUInt(offset, Convert.ToUInt32(foundTextBox.Text));
                      }
 
@@ -368,7 +362,7 @@
                      var foundTextBox = (TextBox)FindName("Value_" + item.ValueAddressHex);
                      if (foundTextBox != null)
                      {
-                        var offset = (uint)(SaveItemStart + (y * 0x8));
+                        var offset = (uint)(versionedItemOffsets.Start + (y * 0x8));
 
                         gecko.WriteUInt(offset, Convert.ToUInt32(foundTextBox.Text));
                      }
@@ -387,7 +381,7 @@
                      var foundTextBox = (TextBox)FindName("Value_" + item.ValueAddressHex);
                      if (foundTextBox != null)
                      {
-                        var offset = (uint)(SaveItemStart + (y * 0x8));
+                        var offset = (uint)(versionedItemOffsets.Start + (y * 0x8));
 
                         gecko.WriteUInt(offset, Convert.ToUInt32(foundTextBox.Text));
                      }
@@ -403,7 +397,7 @@
 
                   foreach (var item in armorList)
                   {
-                     var offset = (uint)(SaveItemStart + (y * 0x8));
+                     var offset = (uint)(versionedItemOffsets.Start + (y * 0x8));
 
                      var foundTextBox = (TextBox)FindName("Value_" + item.ValueAddressHex);
                      if (foundTextBox != null)
@@ -560,6 +554,13 @@
          catch (Exception ex)
          {
             LogError(ex, "Load Items");
+         }
+      }
+
+      private void VersionSelector_DropDownClosed(object sender, EventArgs e)
+      {
+         if (VersionSelector.SelectedItem != null) {
+            Settings.Default.BotwVersion = VersionSelector.SelectedItem.ToString();
          }
       }
 
@@ -1017,48 +1018,44 @@
       {
          var shrine = (ComboBoxItem)ShrineList.SelectedItem;
          var tag = shrine.Tag.ToString();
+         var data = itemDetails.Shrines;
 
-         var data = (JObject)json.SelectToken("Shrines");
-
-         CoordsXValue.Text = data[tag]["LocX"].ToString();
-         CoordsYValue.Text = data[tag]["LocY"].ToString();
-         CoordsZValue.Text = data[tag]["LocZ"].ToString();
+         CoordsXValue.Text = data[tag].LocX.ToString();
+         CoordsYValue.Text = data[tag].LocY.ToString();
+         CoordsZValue.Text = data[tag].LocZ.ToString();
       }
 
       private void TowerListChanged(object sender, SelectionChangedEventArgs e)
       {
          var tower = (ComboBoxItem)TowerList.SelectedItem;
          var tag = tower.Tag.ToString();
+         var data = itemDetails.Towers;
 
-         var data = (JObject)json.SelectToken("Towers");
-
-         CoordsXValue.Text = data[tag]["LocX"].ToString();
-         CoordsYValue.Text = data[tag]["LocY"].ToString();
-         CoordsZValue.Text = data[tag]["LocZ"].ToString();
+         CoordsXValue.Text = data[tag].LocX.ToString();
+         CoordsYValue.Text = data[tag].LocY.ToString();
+         CoordsZValue.Text = data[tag].LocZ.ToString();
       }
 
       private void RanchListChanged(object sender, SelectionChangedEventArgs e)
       {
          var ranch = (ComboBoxItem)RanchList.SelectedItem;
          var tag = ranch.Tag.ToString();
+         var data = itemDetails.Ranches;
 
-         var data = (JObject)json.SelectToken("Ranches");
-
-         CoordsXValue.Text = data[tag]["LocX"].ToString();
-         CoordsYValue.Text = data[tag]["LocY"].ToString();
-         CoordsZValue.Text = data[tag]["LocZ"].ToString();
+         CoordsXValue.Text = data[tag].LocX.ToString();
+         CoordsYValue.Text = data[tag].LocY.ToString();
+         CoordsZValue.Text = data[tag].LocZ.ToString();
       }
 
       private void MiscListChanged(object sender, SelectionChangedEventArgs e)
       {
          var misc = (ComboBoxItem)MiscList.SelectedItem;
          var tag = misc.Tag.ToString();
+         var data = itemDetails.Misc;
 
-         var data = (JObject)json.SelectToken("Misc");
-
-         CoordsXValue.Text = data[tag]["LocX"].ToString();
-         CoordsYValue.Text = data[tag]["LocY"].ToString();
-         CoordsZValue.Text = data[tag]["LocZ"].ToString();
+         CoordsXValue.Text = data[tag].LocX.ToString();
+         CoordsYValue.Text = data[tag].LocY.ToString();
+         CoordsZValue.Text = data[tag].LocZ.ToString();
       }
 
       private void SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -1109,6 +1106,18 @@
          if (ex.StackTrace != null)
          {
             paragraph.Inlines.Add(ex.StackTrace);
+         }
+
+         if (ex.InnerException != null)
+         {
+            paragraph.Inlines.Add(Environment.NewLine + "--- Inner Exception START >>>" + Environment.NewLine);
+            paragraph.Inlines.Add(string.Format("{0}: {1}", ex.InnerException.GetType().Name, ex.InnerException.Message));
+            if (ex.InnerException.StackTrace != null)
+            {
+               paragraph.Inlines.Add(ex.InnerException.StackTrace);
+            }
+            paragraph.Inlines.Add(Environment.NewLine + "<<< Inner Exception END ---" + Environment.NewLine);
+
          }
 
          ErrorLog.Document.Blocks.Add(paragraph);
@@ -1262,11 +1271,14 @@
             }
 
             var name = "Unknown";
-            var path = string.Format("Items.{0}.{1}.Name", pagename.Replace(" ", string.Empty), id);
-            var obj = json.SelectToken(path);
-            if (obj != null)
-            {
-               name = obj.ToString();
+            var list = itemDetails.Items[pagename.Replace(" ", string.Empty)];
+
+            if (list != null) {
+               try {
+                  name = list[id].Name;
+               } catch(KeyNotFoundException e) {
+                  name = string.Format("Unknown {0}", pagename.Replace(" ", string.Empty));
+               }
             }
 
             return name;
@@ -1364,12 +1376,12 @@
          codesXml.Save("codes.xml");
 
          // Disable codehandler before we modify
-         gecko.WriteUInt(CodeHandlerEnabled, 0x00000000);
+         gecko.WriteUInt(offsets.CodeHandler.Enabled, 0x00000000);
 
          // clear current codes
          var array = new byte[4864];
          Array.Clear(array, 0, array.Length);
-         gecko.WriteBytes(CodeHandlerStart, array);
+         gecko.WriteBytes(offsets.CodeHandler.Start, array);
 
          // Write our selected codes to mem stream
          var ms = new MemoryStream();
@@ -1380,10 +1392,10 @@
          }
 
          var bytes = ms.ToArray();
-         gecko.WriteBytes(CodeHandlerStart, bytes);
+         gecko.WriteBytes(offsets.CodeHandler.Start, bytes);
 
          // Re-enable codehandler
-         gecko.WriteUInt(CodeHandlerEnabled, 0x00000001);
+         gecko.WriteUInt(offsets.CodeHandler.Enabled, 0x00000001);
 
          MessageBox.Show(string.Format("{0} Codes Sent", count));
       }
