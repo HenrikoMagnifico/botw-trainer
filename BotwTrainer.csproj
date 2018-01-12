@@ -93,14 +93,16 @@
     </ApplicationDefinition>
     <Compile Include="ByteSwap.cs" />
     <Compile Include="Code.cs" />
+    <Compile Include="DotNetInfo.cs" />
     <Compile Include="Gecko.cs" />
-    <Compile Include="GetDotNetVersion.cs" />
     <Compile Include="IpAddress.cs" />
     <Compile Include="Item.cs" />
     <Compile Include="ItemDetails.cs" />
     <Compile Include="MemAreas.cs" />
     <Compile Include="Offsets.cs" />
-    <Compile Include="ResourceDataFile.cs" />
+    <Compile Include="ResourceDataFile.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="TcpConn.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

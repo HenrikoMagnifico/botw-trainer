@@ -201,7 +201,7 @@
 
       private bool CheckNetVersion()
       {
-         var netVersion = new GetDotNetVersion().Get45PlusFromRegistry();
+         var netVersion = new DotNetInfo().GetFromRegistry();
          if (netVersion.Version == null)
          {
             MessageBoxResult choice = MessageBox.Show("Required .NET Version 4.6.2 not found. Please update.", "New Version", MessageBoxButton.OKCancel);
