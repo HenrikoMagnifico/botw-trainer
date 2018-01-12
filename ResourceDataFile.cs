@@ -11,13 +11,13 @@ namespace BotwTrainer
    public class WebResourceFetcher: WebClient
    {
       public string Method { get; set; }
-      public string fileName { get; private set; }
-      public Uri uri { get; private set; }
+      public string FileName { get; private set; }
+      public Uri Uri { get; private set; }
 
       public WebResourceFetcher(string name)
       {
-         fileName = name;
-         uri = new Uri(string.Format("{0}{1}", Settings.Default.GitUrl, fileName));
+         FileName = name;
+         Uri = new Uri(string.Format("{0}{1}", Settings.Default.GitUrl, FileName));
 
          Encoding = Encoding.UTF8;
          CachePolicy = new System.Net.Cache.RequestCachePolicy(System.Net.Cache.RequestCacheLevel.BypassCache);
@@ -36,7 +36,7 @@ namespace BotwTrainer
 
       public StringReader Contents()
       {
-         return new StringReader(DownloadString(this.uri));
+         return new StringReader(DownloadString(this.Uri));
       }
 
       public bool Exists
@@ -45,11 +45,11 @@ namespace BotwTrainer
             var oldMethod = Method;
             try {
                Method = "HEAD";
-               using (HttpWebResponse response = GetWebRequest(this.uri).GetResponse() as HttpWebResponse)
+               using (HttpWebResponse response = GetWebRequest(this.Uri).GetResponse() as HttpWebResponse)
                {
                   return response.StatusCode == HttpStatusCode.OK;
                }
-            } catch (System.Net.WebException ex) {
+            } catch (WebException) {
                return false;
             } finally {
                Method = oldMethod;
@@ -60,18 +60,18 @@ namespace BotwTrainer
 
    class ResourceDataFile
    {
-      private Assembly assembly { get { return Assembly.GetExecutingAssembly(); } }
+      private Assembly Assembly { get { return Assembly.GetExecutingAssembly(); } }
 
       private string name;
-      private string embeddedPath { get; set; }
-      private string executingPath { get; set; }
+      private string EmbeddedPath { get; set; }
+      private string ExecutingPath { get; set; }
 
       public bool EmbeddedExists {
-         get { return assembly.GetManifestResourceNames().Contains(embeddedPath); }
+         get { return Assembly.GetManifestResourceNames().Contains(EmbeddedPath); }
       }
 
       public bool LocalExists {
-         get { return File.Exists(executingPath); }
+         get { return File.Exists(ExecutingPath); }
       }
 
       public bool RemoteExists {
@@ -86,14 +86,14 @@ namespace BotwTrainer
       public ResourceDataFile(String name)
       {
          this.name = name;
-         this.embeddedPath = string.Format("{0}.Resources.{1}", assembly.GetName().Name, name);
-         this.executingPath = Path.Combine(Path.GetDirectoryName(new Uri(assembly.CodeBase).LocalPath), name);
+         EmbeddedPath = string.Format("{0}.Resources.{1}", Assembly.GetName().Name, name);
+         ExecutingPath = Path.Combine(Path.GetDirectoryName(new Uri(Assembly.CodeBase).LocalPath), name);
 
       }
 
       public StringReader ContentsFromEmbedded()
       {
-         using (Stream stream = assembly.GetManifestResourceStream(embeddedPath))
+         using (Stream stream = Assembly.GetManifestResourceStream(EmbeddedPath))
          {
             using (StreamReader reader = new StreamReader(stream))
             {
@@ -109,7 +109,7 @@ namespace BotwTrainer
 
       public StringReader ContentsFromLocalPath()
       {
-         return new StringReader(File.OpenText(executingPath).ReadToEnd());
+         return new StringReader(File.OpenText(ExecutingPath).ReadToEnd());
       }
 
       public StringReader Contents()

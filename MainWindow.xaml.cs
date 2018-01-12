@@ -7,7 +7,6 @@
    using System.IO;
    using System.Linq;
    using System.Net;
-   using System.Reflection;
    using System.Text;
    using System.Text.RegularExpressions;
    using System.Threading;
@@ -21,8 +20,6 @@
    using System.Xml.Linq;
    using BotwTrainer.Properties;
 
-   using Newtonsoft.Json.Linq;
-
    public partial class MainWindow
    {
       private readonly List<TextBox> tbChanged = new List<TextBox>();
@@ -35,7 +32,7 @@
 
       private List<string> versions;
 
-      private BotwVersion versionedItemOffsets
+      private BotwVersion VersionedItemOffsets
       {
          get
          {
@@ -227,9 +224,9 @@
       {
          try
          {
-            itemTotal = gecko.GetInt(versionedItemOffsets.Count); 
+            itemTotal = gecko.GetInt(VersionedItemOffsets.Count); 
 
-            var currentItemAddress = versionedItemOffsets.End;
+            var currentItemAddress = VersionedItemOffsets.End;
 
             for (var x = 1; x <= itemTotal; x++)
             {
@@ -344,7 +341,7 @@
                      var foundTextBox = (TextBox)FindName("Value_" + item.ValueAddressHex);
                      if (foundTextBox != null)
                      {
-                        var offset = (uint)(versionedItemOffsets.Start + (y * 0x8));
+                        var offset = (uint)(VersionedItemOffsets.Start + (y * 0x8));
                         gecko.WriteUInt(offset, Convert.ToUInt32(foundTextBox.Text));
                      }
 
@@ -362,7 +359,7 @@
                      var foundTextBox = (TextBox)FindName("Value_" + item.ValueAddressHex);
                      if (foundTextBox != null)
                      {
-                        var offset = (uint)(versionedItemOffsets.Start + (y * 0x8));
+                        var offset = (uint)(VersionedItemOffsets.Start + (y * 0x8));
 
                         gecko.WriteUInt(offset, Convert.ToUInt32(foundTextBox.Text));
                      }
@@ -381,7 +378,7 @@
                      var foundTextBox = (TextBox)FindName("Value_" + item.ValueAddressHex);
                      if (foundTextBox != null)
                      {
-                        var offset = (uint)(versionedItemOffsets.Start + (y * 0x8));
+                        var offset = (uint)(VersionedItemOffsets.Start + (y * 0x8));
 
                         gecko.WriteUInt(offset, Convert.ToUInt32(foundTextBox.Text));
                      }
@@ -397,7 +394,7 @@
 
                   foreach (var item in armorList)
                   {
-                     var offset = (uint)(versionedItemOffsets.Start + (y * 0x8));
+                     var offset = (uint)(VersionedItemOffsets.Start + (y * 0x8));
 
                      var foundTextBox = (TextBox)FindName("Value_" + item.ValueAddressHex);
                      if (foundTextBox != null)
@@ -1276,7 +1273,7 @@
             if (list != null) {
                try {
                   name = list[id].Name;
-               } catch(KeyNotFoundException e) {
+               } catch(KeyNotFoundException) {
                   name = string.Format("Unknown {0}", pagename.Replace(" ", string.Empty));
                }
             }

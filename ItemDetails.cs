@@ -3,13 +3,8 @@
    using System;
    using System.Collections.Generic;
    using System.IO;
-   using System.Net;
-   using System.Reflection;
-   using System.Text;
 
    using YamlDotNet.Serialization;
-   using YamlDotNet.Serialization.NamingConventions;
-   using BotwTrainer.Properties;
 
    public class ItemDatum
    {
@@ -22,7 +17,7 @@
          get {
             try {
                return this.GetType().GetProperty(key).GetValue(this) as Dictionary<string, ItemDatum>;
-            } catch (NullReferenceException e) {
+            } catch (NullReferenceException) {
                return null;
             }
          }
