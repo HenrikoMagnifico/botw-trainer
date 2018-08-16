@@ -36,7 +36,7 @@
       {
          get
          {
-            if (!String.IsNullOrWhiteSpace(Settings.Default.BotwVersion))
+            if (!string.IsNullOrWhiteSpace(Settings.Default.BotwVersion))
             {
                return offsets.versions[Settings.Default.BotwVersion];
             }
@@ -115,12 +115,11 @@
          versions = new List<string>(offsets.versions.Keys());
          VersionSelector.ItemsSource = versions;
 
-         if (String.IsNullOrWhiteSpace(Settings.Default.BotwVersion))
+         if (string.IsNullOrWhiteSpace(Settings.Default.BotwVersion))
          {
             Settings.Default.BotwVersion = offsets.versions.newest().Version;
          }
       }
-
 
       private void LoadItemDetails()
       {
@@ -204,7 +203,7 @@
          var netVersion = new DotNetInfo().GetFromRegistry();
          if (netVersion.Version == null)
          {
-            MessageBoxResult choice = MessageBox.Show("Required .NET Version 4.6.2 not found. Please update.", "New Version", MessageBoxButton.OKCancel);
+            MessageBoxResult choice = MessageBox.Show("Required .NET Version 4.7 not found. Please update.", "New Version", MessageBoxButton.OKCancel);
 
             if (choice == MessageBoxResult.OK)
             {
@@ -590,7 +589,7 @@
 
          var bytes = ms.ToArray();
 
-         var pointer = gecko.GetUInt(0x109657EC) + 0xFFFFF4E4;
+         var pointer = gecko.GetUInt(0x1096596C) + 0xFFFFF4E4;
          pointer = gecko.GetUInt(pointer) + 0x53c;
          pointer = gecko.GetUInt(pointer) + 0xFFFFEA24;
          pointer = gecko.GetUInt(pointer) + 0x338;
@@ -603,7 +602,10 @@
       {
          var hour = Convert.ToSingle(CurrentTime.Text) * 15;
 
-         var timePointer = gecko.GetUInt(0x1097DF08) + 0x664; //0x10937E90
+         // ? 10937E90
+         // 1.4.1 1097DF08
+         // 1.5.0 1097E088
+         var timePointer = gecko.GetUInt(0x1097E088) + 0x664;
          timePointer = gecko.GetUInt(timePointer) + 0x98;
 
          gecko.WriteFloat(timePointer + 0x8, hour);
@@ -615,8 +617,9 @@
 
          try
          {
-            //[[[[[0x109657EC] + 0xFFFFF4E4] + 0x53c] + 0xFFFFEA24] + 0x338] + 0x140
-            var pointer = gecko.GetUInt(0x109657EC) + 0xFFFFF4E4;
+            // 1.4.1 [[[[[0x109657EC] + 0xFFFFF4E4] + 0x53c] + 0xFFFFEA24] + 0x338] + 0x140
+            // 1.5.0 [[[[[0x1096596C] + 0xFFFFF4E4] + 0x53c] + 0xFFFFEA24] + 0x338] + 0x140
+            var pointer = gecko.GetUInt(0x1096596C) + 0xFFFFF4E4;
             pointer = gecko.GetUInt(pointer) + 0x53c;
             pointer = gecko.GetUInt(pointer) + 0xFFFFEA24;
             pointer = gecko.GetUInt(pointer) + 0x338;
@@ -1291,7 +1294,7 @@
          try
          {
 
-            var timePointer = gecko.GetUInt(0x1097DF08) + 0x664;
+            var timePointer = gecko.GetUInt(0x1097E088) + 0x664;
             timePointer = gecko.GetUInt(timePointer) + 0x98;
 
             var time = gecko.GetFloat(timePointer);
