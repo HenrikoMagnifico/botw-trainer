@@ -4,12 +4,8 @@ namespace BotwTrainer
    using System.Collections.Generic;
    using System.IO;
    using System.Linq;
-   using System.Net;
-   using System.Text;
 
    using YamlDotNet.Serialization;
-   using YamlDotNet.Serialization.NamingConventions;
-   using BotwTrainer.Properties;
 
    public class CodeHandler
    {
@@ -20,14 +16,14 @@ namespace BotwTrainer
 
    public class BotwVersion : IComparable
    {
-      protected System.Version _version { get; set; }
+      protected Version _version { get; set; }
 
       private string version;
       public string Version {
          get { return version; }
          set {
             version = value;
-            _version = new System.Version(value);
+            _version = new Version(value);
          }
       }
 
@@ -35,7 +31,7 @@ namespace BotwTrainer
       public uint End { get; set; }
       public uint Count { get; set; }
 
-      public int CompareTo(Object obj)
+      public int CompareTo(object obj)
       {
          if (obj is BotwVersion)
          {
@@ -56,17 +52,17 @@ namespace BotwTrainer
 
       public BotwVersion this[string key]
       {
-         get { return this.versions[key]; }
+         get { return versions[key]; }
       }
 
       public BotwVersion newest()
       {
-         return this.versions.Values.First();
+         return versions.Values.First();
       }
 
       public List<string> Keys()
       {
-         return this.versions.Keys.ToList();
+         return versions.Keys.ToList();
       }
    }
 
@@ -82,7 +78,7 @@ namespace BotwTrainer
          get { return _versions; }
          set {
             _versions = value;
-            versions = new BotwTrainer.Versions(value);
+            versions = new Versions(value);
          }
       }
       
@@ -103,4 +99,3 @@ namespace BotwTrainer
       }
    }
 }
-
