@@ -162,6 +162,35 @@
          return status;
       }
 
+      public long GetLong(uint address)
+      {
+         var bytes = ReadBytes(address, 0x4);
+         long value;
+
+         try
+         {
+            Array.Reverse(bytes);
+            value = !bytes.Any() ? 0 : BitConverter.ToInt64(bytes, 0);
+         }
+         catch (ArgumentNullException argumentNullException)
+         {
+            mainWindow.LogError(argumentNullException);
+            return -1;
+         }
+         catch (ArgumentException argumentException)
+         {
+            mainWindow.LogError(argumentException);
+            return -1;
+         }
+         catch (RankException rankException)
+         {
+            mainWindow.LogError(rankException);
+            return -1;
+         }
+
+         return value;
+      }
+
       public int GetInt(uint address)
       {
          var bytes = ReadBytes(address, 0x4);
@@ -364,6 +393,25 @@
       }
 
       public void WriteInt(uint address, int value)
+      {
+         var bytes = BitConverter.GetBytes(value);
+         try
+         {
+            Array.Reverse(bytes);
+         }
+         catch (ArgumentNullException argumentNullException)
+         {
+            mainWindow.LogError(argumentNullException);
+         }
+         catch (RankException rankException)
+         {
+            mainWindow.LogError(rankException);
+         }
+
+         WriteBytes(address, bytes);
+      }
+
+      public void WriteLong(uint address, long value)
       {
          var bytes = BitConverter.GetBytes(value);
          try

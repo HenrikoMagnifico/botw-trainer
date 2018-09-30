@@ -1,13 +1,11 @@
 ﻿namespace BotwTrainer
 {
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.Globalization;
-    using System.Net.NetworkInformation;
-    using System.Text;
-    using System.Threading;
+   using System.Collections.Generic;
+   using System.Globalization;
+   using System.Net.NetworkInformation;
+   using System.Text;
 
-    public class IpAddress
+   public class IpAddress
     {
         private const int TimeOut = 250;
 

@@ -202,7 +202,10 @@
                      <TextBox x:Name="CoordsXValue" Text="-568" Grid.Row="2" Grid.Column="1" Width="60" HorizontalAlignment="Left" Margin="20,4,00,10"/>
                      <TextBox x:Name="CoordsYValue" Text="246" Grid.Row="2" Grid.Column="1" Width="60" HorizontalAlignment="Left" Margin="98,4,0,10"/>
                      <TextBox x:Name="CoordsZValue" Text="1697" Grid.Row="2" Grid.Column="1" Width="60" HorizontalAlignment="Left" Margin="178,4,0,10"/>
+
                      <Button Content="Go" Grid.Row="2" Grid.Column="1" Width="58" Click="CoordsGoClick" HorizontalAlignment="Left" Margin="256,4,0,10" Grid.ColumnSpan="2"/>
+
+                     <Button Content="Get Current" Grid.Row="2" Grid.Column="2" Width="90" Click="CoordsGetClick" HorizontalAlignment="Left" Margin="100,4,0,10"/>
                   </Grid>
                </StackPanel>
 

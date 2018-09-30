@@ -25,7 +25,7 @@ namespace BotwTrainer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("192.168.1.129")]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string IpAddress {
             get {
                 return ((string)(this["IpAddress"]));
@@ -49,7 +49,7 @@ namespace BotwTrainer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("4.3.1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("4.3.2")]
         public string CurrentVersion {
             get {
                 return ((string)(this["CurrentVersion"]));

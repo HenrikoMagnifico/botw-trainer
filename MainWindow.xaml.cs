@@ -598,6 +598,29 @@
          gecko.WriteBytes(address, bytes);
       }
 
+      private void CoordsGetClick(object sender, RoutedEventArgs e)
+      {
+         var pointer = gecko.GetUInt(0x1096596C) + 0xFFFFF4E4;
+         pointer = gecko.GetUInt(pointer) + 0x53c;
+         pointer = gecko.GetUInt(pointer) + 0xFFFFEA24;
+         pointer = gecko.GetUInt(pointer) + 0x338;
+         var address = gecko.GetUInt(pointer) + 0x140;
+
+         var coords = gecko.ReadBytes(address, 0xC);
+
+         var x = coords.Take(4).Reverse().ToArray();
+         var y = coords.Skip(4).Take(4).Reverse().ToArray();
+         var z = coords.Skip(8).Take(4).Reverse().ToArray();
+
+         var xFloat = BitConverter.ToSingle(x, 0);
+         var yFloat = BitConverter.ToSingle(y, 0);
+         var zFloat = BitConverter.ToSingle(z, 0);
+
+         CoordsXValue.Text = xFloat.ToString();
+         CoordsYValue.Text = yFloat.ToString();
+         CoordsZValue.Text = zFloat.ToString();
+      }
+
       private void ChangeTimeClick(object sender, RoutedEventArgs e)
       {
          var hour = Convert.ToSingle(CurrentTime.Text) * 15;
